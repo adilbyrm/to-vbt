@@ -1,0 +1,6 @@
+/.git/
+/vendor/
+/index.php
+.idea
+.vscode
+/composer.lock
