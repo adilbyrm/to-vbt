@@ -13,14 +13,14 @@ class VBT
         $this->client = new Client();
     }
 
-    public function doRequest($url, $data)
+    public function doRequest($url, $data, $method = 'post')
     {
         $headers = ['Content-type' => 'application/json'];
         if ($this->token) {
             $headers["vbtAuthorization"] = $this->token;
         }
 
-        $res = $this->client->post($url, [
+        $res = $this->client->$method($url, [
             "http_errors" => false,
             "headers" => $headers,
             "body" => json_encode($data)
@@ -63,8 +63,36 @@ class VBT
      */
     public function mukellef($number)
     {
-        $res = $this->doRequest(Config::$baseUrl . '/VbtApi/GetGibInvoiceUser', ["Identifier" => $number], $this->token);
+        $res = $this->doRequest(Config::$baseUrl . '/VbtApi/GetGibInvoiceUser', ["Identifier" => $number]);
         $data = json_decode($res);
         return $data->Data;
+    }
+
+    public function incomingInvoiceList()
+    {
+        $criteria = [
+            'Query' => [
+                'IssueDate' => [
+                    'StartDate' => date('Y-m-d H:i:s', strtotime('-1 months')),
+                    'EndDate' => date('Y-m-d H:i:s')
+                ]
+            ],
+            'Skip' => 0,
+            'Take' => 100,
+            'OrderByName' => '',
+            'OrderByType' => 'asc'
+        ];
+        //GetIncomingInvoiceList
+        $res = $this->doRequest(Config::$baseUrl . '/VbtApi/GetOutgoingInvoiceList', $criteria);
+        $data = json_decode($res);
+        return $data;
+    }
+
+    public function incomingInvoiceDetail($id)
+    {
+        //GetIncomingInvoiceList
+        $res = $this->doRequest(Config::$baseUrl . "/VbtApi/GetOutgoingInvoice?id={$id}", [], 'get');
+        $data = json_decode($res);
+        return $data;
     }
 }
