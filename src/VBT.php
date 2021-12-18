@@ -68,30 +68,18 @@ class VBT
         return $data->Data;
     }
 
-    public function incomingInvoiceList()
+    public function incomingInvoiceList($criteria)
     {
-        $criteria = [
-            'Query' => [
-                'IssueDate' => [
-                    'StartDate' => date('Y-m-d H:i:s', strtotime('-1 months')),
-                    'EndDate' => date('Y-m-d H:i:s')
-                ]
-            ],
-            'Skip' => 0,
-            'Take' => 100,
-            'OrderByName' => '',
-            'OrderByType' => 'asc'
-        ];
         //GetIncomingInvoiceList
-        $res = $this->doRequest(Config::$baseUrl . '/VbtApi/GetOutgoingInvoiceList', $criteria);
+        $res = $this->doRequest(Config::$baseUrl . '/VbtApi/GetIncomingInvoiceList', $criteria);
         $data = json_decode($res);
         return $data;
     }
 
     public function incomingInvoiceDetail($id)
     {
-        //GetIncomingInvoiceList
-        $res = $this->doRequest(Config::$baseUrl . "/VbtApi/GetOutgoingInvoice?id={$id}", [], 'get');
+        //GetIncomingInvoice
+        $res = $this->doRequest(Config::$baseUrl . "/VbtApi/GetIncomingInvoice?id={$id}", [], 'get');
         $data = json_decode($res);
         return $data;
     }
